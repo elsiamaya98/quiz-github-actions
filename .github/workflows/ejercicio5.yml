@@ -1,0 +1,45 @@
+name: Ejercicio 5 - Variables, Outputs y Secrets
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+env:
+  APP_NAME: "Quiz App"
+  VERSION: "1.0.0"
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      timestamp: ${{ steps.create-timestamp.outputs.timestamp }}
+    steps:
+      - name: Imprimir nombre y versión
+        run: |
+          echo "Aplicación: $APP_NAME"
+          echo "Versión: $VERSION"
+
+      - id: create-timestamp
+        name: Crear timestamp
+        run: echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
+
+  test:
+    needs: setup
+    runs-on: ubuntu-latest
+    env:
+      NODE_ENV: test
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Ejecutar tests
+        run: npm test
+
+      - name: Imprimir timestamp de setup
+        run: echo "Timestamp del
