@@ -22,7 +22,8 @@ jobs:
 
       - id: create-timestamp
         name: Crear timestamp
-        run: echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
+        run: |
+          echo "timestamp=$(date +%s)" >> $GITHUB_OUTPUT
 
   test:
     needs: setup
@@ -39,7 +40,24 @@ jobs:
           node-version: '18'
 
       - name: Ejecutar tests
-        run: npm test
+        run: |
+          npm test
 
       - name: Imprimir timestamp de setup
-        run: echo "Timestamp del
+        run: |
+          echo "Timestamp del job setup: ${{ needs.setup.outputs.timestamp }}"
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    env:
+      API_KEY: ${{ secrets.API_KEY }}
+    steps:
+      - name: Desplegando aplicación
+        run: |
+          echo "Desplegando $APP_NAME v$VERSION"
+
+      - name: Verificar secret
+        run: |
+          echo "Secret configurada correctamente"
