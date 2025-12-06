@@ -1,0 +1,30 @@
+name: Ejercicio 4 - Tests Multi-OS
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test-multi-os:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Ejecutar tests
+        run: |
+          npm test
+
+      - name: Mostrar sistema operativo
+        run: |
+          echo "Sistema operativo del runner: ${{ runner.os }}"
